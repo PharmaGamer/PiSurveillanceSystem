@@ -1,4 +1,4 @@
-ssssqimport os
+import os
 import time
 from datetime import datetime
 from picamera2 import Picamera2
