@@ -7,3 +7,15 @@ Requirements:
   HC-SR501 PIR sensor with signal connected to GPIO 23
   
 I'm working out how to put this all in a neat and tidy case.
+
+Standard Bookworm Lite OS installation
+
+Packages required:
+  python3-picamera2
+  lighttpd
+    Configured directory listing (dir-listing.activate = "enable") in /etc/lighttpd/lighttpd.conf.
+    Hosted videos in /var/www/html/videos.
+  python3-rpi.gpio
+
+  Filesystem changes:
+    sudo chmod -R 777 /var/www/html/videos
