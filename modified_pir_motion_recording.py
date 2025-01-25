@@ -53,7 +53,7 @@ def record_video():
         prev_frame = current_frame
 
         if motion_detected:
-            print("Motion detected.")
+            print(f"Motion detected.{last_motion_time}")
             last_motion_time = time.monotonic()  # Reset the motion timeout
         elif time.monotonic() - last_motion_time > 10:
             print("No motion detected for 10 seconds. Stopping recording.")
