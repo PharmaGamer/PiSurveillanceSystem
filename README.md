@@ -16,6 +16,8 @@ Packages required:
     Configured directory listing (dir-listing.activate = "enable") in /etc/lighttpd/lighttpd.conf.
     Hosted videos in /var/www/html/videos.
   python3-rpi.gpio
+  ffmpeg
+  rclone
 
   Filesystem changes:
     sudo chmod -R 777 /var/www/html/videos
