@@ -104,7 +104,7 @@ def main():
         print("PIR sensor stabilized.")
         
         GPIO.add_event_detect(PIR_SENSOR_PIN, GPIO.RISING, callback=motion_detected_callback, bouncetime=200)
-
+        GPIO.setup(PIR_SENSOR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  # or GPIO.PUD_UP if your PIR sensor is active low.
         while True:
             with motion_lock:
                 if motion_detected_flag:
