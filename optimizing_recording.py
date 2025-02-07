@@ -13,7 +13,6 @@ PIR_SENSOR_PIN = 23
 
 # Initialize GPIO for PIR sensor
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIR_SENSOR_PIN, GPIO.IN)
 
 # Initialize the camera (moved inside record_video)
 picam2 = None  # Initialize to None
@@ -97,14 +96,17 @@ def main():
     global motion_detected_flag
     print("Motion detection started. Waiting for motion...")
     try:
-        # CRUCIAL STEP: Wait for the PIR sensor to stabilize and the pin to go LOW
+        # CRUCIAL STEP: Set pull-down resistor for PIR sensor pin (ONLY ONCE!)
+        GPIO.setup(PIR_SENSOR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  # Or GPIO.PUD_UP
+
+        # Wait for the PIR sensor to stabilize and the pin to go LOW
         print("Waiting for PIR sensor to stabilize...")
         while GPIO.input(PIR_SENSOR_PIN) == GPIO.HIGH:
             time.sleep(0.1)
         print("PIR sensor stabilized.")
-        
+
         GPIO.add_event_detect(PIR_SENSOR_PIN, GPIO.RISING, callback=motion_detected_callback, bouncetime=200)
-        GPIO.setup(PIR_SENSOR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  # or GPIO.PUD_UP if your PIR sensor is active low.
+
         while True:
             with motion_lock:
                 if motion_detected_flag:
