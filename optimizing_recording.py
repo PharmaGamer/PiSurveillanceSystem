@@ -6,6 +6,7 @@ from picamera2.encoders import H264Encoder
 import cv2
 import numpy as np
 import RPi.GPIO as GPIO
+import threading # For thread lock
 
 # PIR Sensor GPIO pin
 PIR_SENSOR_PIN = 23
@@ -20,6 +21,9 @@ picam2 = None  # Initialize to None
 # Define output directory for videos
 output_directory = "/var/www/html/videos"
 os.makedirs(output_directory, exist_ok=True)
+
+motion_detected_flag = False  # Flag to indicate motion detected
+motion_lock = threading.Lock() # Lock for the flag variable
 
 def detect_motion(frame1, frame2, threshold=30):
     """Detects motion by comparing two frames."""
@@ -83,7 +87,7 @@ def record_video():
     picam2 = None  # Reset picam2 to None
     time.sleep(2) # Give the camera some time to fully shut down.
 
-
+'''
 def motion_detected_callback(channel):
     print("Motion detected!")
     time.sleep(0.05) # Debounce at the start
@@ -99,8 +103,14 @@ def motion_detected_callback(channel):
             time.sleep(2)  # Debounce delay
             return # Exit to avoid repeated triggers
     print("False trigger or short event") # If it gets here, it was a short event
+'''
 
+def motion_detected_callback(channel):
+    global motion_detected_flag
+    with motion_lock:
+        motion_detected_flag = True
 
+'''
 def main():
     print("Motion detection started. Waiting for motion...")
     try:
@@ -114,7 +124,34 @@ def main():
         GPIO.cleanup()
         if picam2 is not None:  # Check if camera was initialized
             picam2.close() # Close the camera if it's open
+'''
+def main():
+    global motion_detected_flag
+    print("Motion detection started. Waiting for motion...")
+    try:
+        GPIO.add_event_detect(PIR_SENSOR_PIN, GPIO.RISING, callback=motion_detected_callback, bouncetime=200)
 
+        while True:
+            with motion_lock:
+                if motion_detected_flag:
+                    motion_detected_flag = False  # Reset the flag
+                    start_time = time.monotonic()
+                    while GPIO.input(PIR_SENSOR_PIN) == GPIO.HIGH:  # Check if it's still high
+                        time.sleep(0.05)  # Small delay
+                        if time.monotonic() - start_time > 0.2:  # Minimum 200ms trigger time
+                            record_video()
+                            print("Waiting for the PIR sensor to stabilize...")
+                            time.sleep(2)  # Debounce delay
+                            break
+                    print("False trigger or short event") # If it gets here, it was a short event
+            time.sleep(0.1)  # Main loop sleeps while waiting for interrupts
+
+    except KeyboardInterrupt:
+        print("Exiting motion detection.")
+    finally:
+        GPIO.cleanup()
+        if picam2 is not None:  # Check if camera was initialized
+            picam2.close() # Close the camera if it's open
 
 if __name__ == "__main__":
     main()
