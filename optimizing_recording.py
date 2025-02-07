@@ -97,6 +97,12 @@ def main():
     global motion_detected_flag
     print("Motion detection started. Waiting for motion...")
     try:
+        # CRUCIAL STEP: Wait for the PIR sensor to stabilize and the pin to go LOW
+        print("Waiting for PIR sensor to stabilize...")
+        while GPIO.input(PIR_SENSOR_PIN) == GPIO.HIGH:
+            time.sleep(0.1)
+        print("PIR sensor stabilized.")
+        
         GPIO.add_event_detect(PIR_SENSOR_PIN, GPIO.RISING, callback=motion_detected_callback, bouncetime=200)
 
         while True:
