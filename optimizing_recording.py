@@ -48,13 +48,13 @@ def record_video():
 
     while True: # ... (rest of the recording logic remains the same)
 
-    picam2.stop_recording()
-    print(f"Recording stopped: {video_filename}")
+        picam2.stop_recording()
+        print(f"Recording stopped: {video_filename}")
 
-    # Close the camera immediately after recording
-    picam2.close()
-    picam2 = None  # Reset picam2 to None
-    time.sleep(2) # Give the camera some time to fully shut down.
+        # Close the camera immediately after recording
+        picam2.close()
+        picam2 = None  # Reset picam2 to None
+        time.sleep(2) # Give the camera some time to fully shut down.
     
 
 def motion_detected_callback(channel):
