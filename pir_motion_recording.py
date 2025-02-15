@@ -16,7 +16,7 @@ GPIO.setup(PIR_SENSOR_PIN, GPIO.IN)
 
 # Initialize the camera
 picam2 = Picamera2()
-video_config = picam2.create_video_configuration(main={"size": (640, 480)})
+video_config = picam2.create_video_configuration(main={"size": (1280, 720)})
 picam2.configure(video_config)
 encoder = H264Encoder(10000000)
 picam2.set_controls({"Rotation": 180})
