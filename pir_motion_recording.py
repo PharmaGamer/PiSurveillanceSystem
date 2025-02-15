@@ -19,7 +19,7 @@ picam2 = Picamera2()
 video_config = picam2.create_video_configuration(main={"size": (1280, 720)})
 picam2.configure(video_config)
 encoder = H264Encoder(10000000)
-picam2.set_controls({"Rotation": 180})
+picam2.Transform(hflip=1, vflip=1)
 
 # Define output directory for videos
 output_directory = "/var/www/html/videos"
