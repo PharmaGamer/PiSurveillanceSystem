@@ -6,6 +6,7 @@ from picamera2.encoders import H264Encoder
 import cv2
 import numpy as np
 import RPi.GPIO as GPIO
+from libcamera import Transform  # Import this at the top of your script
 
 # PIR Sensor GPIO pin
 PIR_SENSOR_PIN = 23
