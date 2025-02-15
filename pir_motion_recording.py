@@ -24,13 +24,27 @@ encoder = H264Encoder(10000000)
 # Define output directory for videos
 output_directory = "/var/www/html/videos"
 os.makedirs(output_directory, exist_ok=True)
-
+'''
 def detect_motion(frame1, frame2, threshold=30):
     """Detects motion by comparing two frames."""
     diff = cv2.absdiff(frame1, frame2)
     gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray, 25, 255, cv2.THRESH_BINARY)
     motion = np.sum(thresh) > threshold
+    return motion
+'''
+def detect_motion(frame1, frame2, threshold=3000):
+    """Detects motion by comparing two frames with filtering."""
+    diff = cv2.absdiff(frame1, frame2)
+    gray = cv2.GaussianBlur(cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY), (5, 5), 0)  # Reduce noise
+    _, thresh = cv2.threshold(gray, 25, 255, cv2.THRESH_BINARY)
+
+    # Find contours of moving objects
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Motion is detected only if a large enough area changes
+    motion = any(cv2.contourArea(c) > threshold for c in contours)
+    
     return motion
 
 def record_video():
