@@ -19,7 +19,6 @@ picam2 = Picamera2()
 video_config = picam2.create_video_configuration(main={"size": (1280, 720)}, transform = Transform(hflip=1, vflip=1))
 picam2.configure(video_config)
 encoder = H264Encoder(10000000)
-transform = Transform(hflip=1, vflip=1)
 
 # Define output directory for videos
 output_directory = "/var/www/html/videos"
